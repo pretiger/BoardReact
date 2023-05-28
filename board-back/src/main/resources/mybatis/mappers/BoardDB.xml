@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.exam.mapper.BoardDao">
+	<select id="list" resultType="com.board.exam.domain.Board">
+		select num,writer,subject,content,subgroup,substep,sublevel,viewcount,
+			regdate,(select count(*) from java.reply where bnum = b.num) count
+		from java.board_spring b 
+		order by subgroup desc, substep asc limit #{start}, #{end}
+	</select>
+	<select id="count" resultType="int">
+		select count(*) from java.board_spring
+	</select>
+	<select id="detail" resultType="com.board.exam.domain.Board">
+		select num,writer,subject,content,subgroup,substep,sublevel,viewcount,
+			regdate,(select count(*) from java.reply where bnum = b.num) count 
+		from java.board_spring b 
+		where num=#{num}
+	</select>
+	<select id="listComment" resultType="com.board.exam.domain.Reply">
+		select * from java.reply where bnum = #{bnum} order by rnum desc
+	</select>
+	<insert id="insertComment">
+		<selectKey keyProperty="rnum" order="BEFORE" resultType="int">
+			select ifnull(max(rnum)+1,1) from java.reply
+		</selectKey>
+		insert into java.reply (rnum, bnum, replytext, replyer, regdate) 
+		values (#{rnum}, #{bnum}, #{replytext}, #{replyer}, NOW())
+	</insert>
+	<delete id="deleteComment">
+		delete from java.reply where rnum = #{rnum}
+	</delete>
+	<update id="update">
+		update java.board_spring set subject=#{subject}, content=#{content}
+		where num=#{num}
+	</update>
+	<select id="preview" resultType="String">
+		select content from java.board_spring where num = #{num}
+	</select>
+	<update id="plusSubstep">
+		update java.board_spring set substep = substep + 1
+		where subgroup = #{subgroup} and substep >= #{substep}
+	</update>
+	<insert id="insertReply">
+		<selectKey keyProperty="num" order="BEFORE" resultType="int">
+			select ifnull(max(num)+1,1) from java.board_spring
+		</selectKey>
+		insert into java.board_spring (num,writer,subject,content,subgroup,substep,sublevel,viewcount,regdate) 
+		values (#{num},#{writer},#{subject},#{content},#{subgroup},#{substep},#{sublevel},0,NOW())
+	</insert>
+	<insert id="insertBoard">
+		<selectKey keyProperty="num" order="BEFORE" resultType="int">
+			select ifnull(max(num)+1,1) from java.board_spring
+		</selectKey>
+		insert into java.board_spring (num,writer,subject,content,subgroup,substep,sublevel,viewcount,regdate) 
+		values (#{num},#{writer},#{subject},#{content},#{num},0,0,0,NOW())
+	</insert>
+	<delete id="delete">
+		delete from java.board_spring where num = #{num}
+	</delete>
+	<insert id="insertAttach">
+		insert into attach (fullname, bnum) values (#{fullname}, #{bnum})
+	</insert>
+	<select id="listAttach" resultType="String">
+		select fullname from attach where bnum=#{bnum}
+	</select>
+	<delete id="deleteAttach">
+		delete from attach where fullname=#{fullname}
+	</delete>
+	<delete id="deleteReply">
+		delete from reply where bnum=#{bnum}
+	</delete>
+	
+</mapper>

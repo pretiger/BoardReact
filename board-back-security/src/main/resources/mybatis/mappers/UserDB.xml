@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.board.exam.mapper.UserDao">
+    <update id="update">
+		update java.user set password=#{password}, email=#{email}, role=#{role}
+		where username=#{username}
+	</update>
+	<select id="login" resultType="com.board.exam.domain.User">
+		select * from java.user where username = #{username}
+	</select>
+	<select id="loginchk" resultType="com.board.exam.domain.User">
+		select * from java.user where username = #{username} and password = #{password}
+	</select>
+	<insert id="insert">
+		insert into java.user (username, password, email, role, oauth, createDate) 
+		values (#{username}, #{password}, #{email}, #{role}, #{oauth}, NOW())
+	</insert>	
+
+</mapper>

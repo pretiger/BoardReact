@@ -1,0 +1,30 @@
+server:
+  port: 80
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mariadb://localhost:3306/java?characterEncoding=UTF-8&serverTimezone=UTC
+    username: java
+    password: java1234
+
+  servlet:
+    multipart:
+      location: d:/upload
+      maxFileSize: 20MB
+      maxRequestSize: 10MB
+    
+mybatis:
+  type-aliases-package: com.board.exam.domain
+  mapper-locations: mybatis/mappers/*.xml
